@@ -1,0 +1,37 @@
+services:
+  redis:
+    image: redis:alpine
+    container_name: aegis-redis
+    ports:
+      - "6379:6379"
+    restart: unless-stopped
+
+  backend:
+    image: dhanraj11/aegis-backend:latest
+    container_name: aegis-backend
+    ports:
+      - "5000:5000"
+    restart: unless-stopped
+
+  traditional-proxy:
+    image: dhanraj11/aegis-traditional-proxy:latest
+    container_name: traditional-proxy
+    ports:
+      - "5010:5010"
+    command: ["-port", "5010", "-backend", "http://backend:5000", "-redis-addr", "redis:6379", "-limit", "6"]
+    depends_on:
+      - backend
+      - redis
+    restart: unless-stopped
+
+  aegis-node:
+    image: dhanraj11/aegis:latest
+    container_name: aegis-node1
+    ports:
+      - "5031:5031"
+      - "5131:5131/udp"
+    volumes:
+      - ./config.yaml:/etc/aegis/config.yaml:ro
+    depends_on:
+      - backend
+    restart: unless-stopped

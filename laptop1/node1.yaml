@@ -1,0 +1,20 @@
+ProxyPort: 5031
+GossipPort: 5131
+Peers:
+  - "10.181.31.5:5131"
+  - "10.181.31.217:5131"
+BackendURL: "http://backend:5000"
+
+Protection:
+  Mode: "Strict"
+  RateLimit:
+    Window: "1m"
+    AuthRateLimit: 50
+    IPRateLimit: 6
+  Concurrency:
+    MaxInFlight: 100
+    MinInFlight: 5
+    InitialLimit: 20
+    Alpha: 3.0
+    Beta: 6.0
+    WindowSize: "10s"
